@@ -6,7 +6,7 @@ export const logLevels = {
     ALERT: "ALERT",
 }
 
-export const log = (message: string, logLevel = logLevels.DEBUG, stage): void => {
+export const log = (message: string, logLevel = logLevels.DEBUG, stage = ""): void => {
     const prependMessage = stage ? `During ${stage}` : ""
     const logMessage = `${logLevel}: ${prependMessage} ${message}` 
     console.log(logMessage)
