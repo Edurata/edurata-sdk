@@ -15,6 +15,7 @@ jobs:
           node-version: 10
       - run: yarn
       - run: yarn build
-      - run: tsc && cp package.json dist && cp Readme.md dist && cd dist && npm publish
+      - run: cp package.json dist && cp Readme.md dist
+      - run: cd dist && npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
