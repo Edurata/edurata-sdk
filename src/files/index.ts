@@ -1,8 +1,9 @@
 import fs from 'fs'
 import crypto from 'crypto';
 
-const FILE_PLACEHOLDER = "__file__"
 const basePath = "/tmp"
+
+export const FILE_PLACEHOLDER = "__file__"
 
 export class File {
     localFilePath
