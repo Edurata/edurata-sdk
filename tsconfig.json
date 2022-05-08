@@ -1,20 +1,21 @@
 {
     "compilerOptions": {
-    "lib": ["es2020", "dom"],
-    "module": "commonjs",
-    "target": "es2020",
-    "strict": false,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "allowJs": true,
-    "forceConsistentCasingInFileNames": true,
-    "allowSyntheticDefaultImports": true, 
-    "isolatedModules": false,
-    "declaration": true,
-    // "moduleResolution": "node",
-    "sourceMap": false,
-    // "baseUrl": "./",
-    "outDir": "dist"
+        "lib": ["es2020", "dom"],
+        "module": "commonjs",
+        "target": "es2020",
+        "strict": false,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "allowJs": true,
+        "forceConsistentCasingInFileNames": true,
+        "allowSyntheticDefaultImports": true, 
+        "isolatedModules": false,
+        "declaration": true,
+        "resolveJsonModule": true,
+        // "moduleResolution": "node",
+        "sourceMap": false,
+        // "baseUrl": "./",
+        "outDir": "dist"
     },
     "include": ["src/index.ts"]
 }
