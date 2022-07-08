@@ -11,7 +11,7 @@ export class File {
     dependencyKey
     additionalKeys
 
-    constructor(interfaceKey, dependencyKey, additionalKeys) {
+    constructor(interfaceKey = "", dependencyKey = "", additionalKeys = []) {
         const localFilename = crypto.randomUUID()
         this.localFilePath = `${basePath}/${localFilename}`
         this.interfaceKey = interfaceKey
