@@ -5,9 +5,11 @@ const errorFilePath = "logs/error.log"
 
 export class Logger {
     wLogger;
-    withCw = false;
+    IS_LAMBDA;
     
-    constructor() {}
+    constructor() {
+        this.IS_LAMBDA = !!process.env.LAMBDA_TASK_ROOT
+    }
 
     private _lazyLoadLogger() {
         if (!this.wLogger) {
@@ -15,22 +17,14 @@ export class Logger {
             const EDU_LOG_STREAM = process.env.EDU_LOG_STREAM
             let transports: any = [
                 new winston.transports.Console({
+                    level: 'debug',
                     format: winston.format.combine(
                         winston.format.colorize(),
                         winston.format.printf(info => `${new Date().toISOString()} ${info.level}: ${JSON.stringify(info.message)}`),
                     )
-                }),
-                new winston.transports.File({ filename: errorFilePath, level: 'error' }),
-                new winston.transports.File({ 
-                    filename: logFilePath,
-                    format: winston.format.combine(
-                        winston.format.timestamp(),
-                        winston.format.json()
-                    )
                 })
             ]
             if (EDU_LOG_GROUP && EDU_LOG_STREAM) {
-                this.withCw = true
                 transports.push(new WinstonCloudWatch({
                     name: 'winston-cloudwatch',
                     logGroupName: EDU_LOG_GROUP,
@@ -38,6 +32,19 @@ export class Logger {
                     awsRegion: 'eu-central-1',
                     jsonMessage: true
                 }))
+            }
+            if (!this.IS_LAMBDA) {
+                transports.push(
+                    new winston.transports.File({ filename: errorFilePath, level: 'error' }),
+                    new winston.transports.File({ 
+                        level: 'debug',
+                        filename: logFilePath,
+                        format: winston.format.combine(
+                            winston.format.timestamp(),
+                            winston.format.json()
+                        )
+                    })
+                )
             }
             this.wLogger = winston.createLogger({
                 levels: winston.config.syslog.levels,
@@ -48,9 +55,11 @@ export class Logger {
     }
 
     flush = () => {
-        if (this.withCw) {
+        if (this.wLogger) {
             const cwTransport = this.wLogger.transports.find((t) => t.name === 'winston-cloudwatch')
-            cwTransport.kthxbye(()=> {});
+            if (cwTransport) {
+                cwTransport.kthxbye(()=> {});
+            }
         }
     }
 
