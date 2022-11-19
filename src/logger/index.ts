@@ -21,16 +21,19 @@ export class Logger {
 
     _init(logGroup, logStream) {
         let transports: any = []
-        if (!logGroup || !logStream) {
-            throw Error("Can't initialise logger as logGroup or logStream are not defined")
+        if (logGroup && logStream) {
+            console.log("Configured cloudwatch ", logGroup, logStream)
+            transports.push(new WinstonCloudWatch({
+                name: 'winston-cloudwatch',
+                logGroupName: logGroup,
+                logStreamName: logStream,
+                awsRegion: 'eu-central-1',
+                jsonMessage: true
+            }))
+        } else {
+            console.log("Skipping cloudwatch as no logGroup or logstream defined")
         }
-        transports.push(new WinstonCloudWatch({
-            name: 'winston-cloudwatch',
-            logGroupName: logGroup,
-            logStreamName: logStream,
-            awsRegion: 'eu-central-1',
-            jsonMessage: true
-        }))
+
         if (!this.IS_LAMBDA) {
             transports.push(
                 new winston.transports.Console({
