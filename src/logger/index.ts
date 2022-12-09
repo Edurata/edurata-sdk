@@ -9,30 +9,28 @@ export class Logger {
     
     constructor(logGroup, logStream) {
         this.IS_LAMBDA = !!process.env.LAMBDA_TASK_ROOT
+        const EDU_LOG_GROUP = process.env.EDU_LOG_GROUP
+        const EDU_LOG_STREAM = process.env.EDU_LOG_STREAM
+
         if (logGroup && logStream) {
             this._init(logGroup, logStream)
-        } else {
-            const EDU_LOG_GROUP = process.env.EDU_LOG_GROUP
-            const EDU_LOG_STREAM = process.env.EDU_LOG_STREAM
+        } else if (EDU_LOG_GROUP && EDU_LOG_STREAM) {
             this._init(EDU_LOG_GROUP, EDU_LOG_STREAM)
+        } else {
+            console.log("Skipping cloudwatch as no logGroup or logstream defined")
         }
-
     }
 
     _init(logGroup, logStream) {
         let transports: any = []
-        if (logGroup && logStream) {
-            console.log("Configured cloudwatch ", logGroup, logStream)
-            transports.push(new WinstonCloudWatch({
-                name: 'winston-cloudwatch',
-                logGroupName: logGroup,
-                logStreamName: logStream,
-                awsRegion: 'eu-central-1',
-                jsonMessage: true
-            }))
-        } else {
-            console.log("Skipping cloudwatch as no logGroup or logstream defined")
-        }
+        console.log("Configured cloudwatch ", logGroup, logStream)
+        transports.push(new WinstonCloudWatch({
+            name: 'winston-cloudwatch',
+            logGroupName: logGroup,
+            logStreamName: logStream,
+            awsRegion: 'eu-central-1',
+            jsonMessage: true
+        }))
 
         if (!this.IS_LAMBDA) {
             transports.push(
@@ -71,23 +69,43 @@ export class Logger {
     }
 
     debug = (message) => {
-        this.wLogger.debug(message)
+        if (this.wLogger) {
+            this.wLogger.debug(message)
+        } else {
+            console.log("DEBUG: ", message)
+        }
     }
 
     info = (message) => {
-        this.wLogger.info(message)
+        if (this.wLogger) {
+            this.wLogger.info(message)
+        } else {
+            console.log("INFO: ", message)
+        }
     }
 
     warning = (message) => {
-        this.wLogger.warning(message)
+        if (this.wLogger) {
+            this.wLogger.warning(message)
+        } else {
+            console.log("WARNING: ", message)
+        }
     }
 
     error = (message) => {
-        this.wLogger.error(message)
+        if (this.wLogger) {
+            this.wLogger.error(message)
+        } else {
+            console.log("ERROR: ", message)
+        }
     }
 
     alert = (message) => {
-        this.wLogger.alert(message)
+        if (this.wLogger) {
+            this.wLogger.alert(message)
+        } else {
+            console.log("ALERT: ", message)
+        }
     }
 }
 
